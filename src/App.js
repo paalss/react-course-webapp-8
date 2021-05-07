@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
@@ -9,8 +9,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  async function fetchMoviesHandler() {
-    console.log("setIsLoading(true)");
+  const fetchMoviesHandler = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -19,7 +18,6 @@ function App() {
         throw new Error("Something went wrong");
       }
       const data = await res.json();
-
       const transformedMovies = data.results.map((movieData) => {
         return {
           id: movieData.episode_id,
@@ -34,7 +32,11 @@ function App() {
       setError(error.message);
     }
     setIsLoading(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchMoviesHandler();
+  }, [fetchMoviesHandler]);
 
   function removeHandler() {
     setMovies([]);
