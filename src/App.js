@@ -16,10 +16,9 @@ function App() {
     try {
       const res = await fetch("https://swapi.dev/api/films");
       if (!res.ok) {
-        throw new Error('Something went wrong')
+        throw new Error("Something went wrong");
       }
       const data = await res.json();
-
 
       const transformedMovies = data.results.map((movieData) => {
         return {
@@ -32,27 +31,34 @@ function App() {
       setMovies(transformedMovies);
       setIsLoading(false);
     } catch (error) {
-      setError(error.message)
+      setError(error.message);
     }
-    setIsLoading(false)
+    setIsLoading(false);
   }
 
   function removeHandler() {
     setMovies([]);
     setIsLoading(true);
   }
+
+  let content = <p>found no movies</p>;
+  if (movies.length > 0) {
+    content = <MoviesList movies={movies} />;
+  }
+  if (error) {
+    content = <p>{error}</p>;
+  }
+  if (isLoading) {
+    content = <p>Loading...</p>;
+  }
+
   return (
     <React.Fragment>
       <section>
         <button onClick={removeHandler}>remove</button> <br /> <br />
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
-      <section>
-        {!isLoading && movies.length > 0 && <MoviesList movies={movies} />}
-        {!isLoading && movies.length === 0 && !error && <p>Found no movies</p>}
-        {isLoading && <p>Loading...</p>}
-        {!isLoading && error && <p>{error}</p>}
-      </section>
+      <section>{content}</section>
     </React.Fragment>
   );
 }
